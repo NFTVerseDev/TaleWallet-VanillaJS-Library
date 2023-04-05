@@ -187,7 +187,7 @@ function showWalletUI(tale_wallet_address) {
             </div>
                 
                 <div class="flex flex-col items-center">
-                    <div class="relative z-10">
+                    <div class="relative">
                         <img src="./images/algorandhexagon.svg" class="w-50" />
                     </div>
                     <div  id="wallet_balance" class="text-2xl font-bold text-tale"> 

@@ -609,30 +609,25 @@ ol {
 
 /* Style the tab */
 .tab {
-  background-color: white !important;
-
-  width: 80%;
-  margin: auto;
+  display: flex;
+  justify-content: space-between;
 }
-.tablinks {
-  background-color: white;
-}
-
-/* Style the buttons inside the tab */
 .tab button {
-  color: black;
-  padding: 22px 16px;
-  width: 33%;
-  border-top: none;
+  flex-basis: calc(33.33%);
+  border-bottom: 4px solid rgb(229, 231, 235);
   border-left: none;
   border-right: none;
-  border-bottom: 4px solid rgb(229, 231, 235);
-  text-align: center;
+  border-top: none;
   cursor: pointer;
   transition: 0.3s;
   font-size: 17px;
+  padding-bottom: 20px;
 }
 
+.tab button.active {
+  border-bottom: 4px solid rgb(187, 255, 0);
+  z-index: 1;
+}
 /* Create an active/current "tab button" class */
 .tab button.active {
   border-bottom: 4px solid rgb(187, 255, 0);
