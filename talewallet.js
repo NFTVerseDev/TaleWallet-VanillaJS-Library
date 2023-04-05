@@ -163,9 +163,17 @@ function setUpTaleWallet(authToken) {
 
 function showWalletUI(tale_wallet_address) {
   document.getElementById("wallet_div").innerHTML = `
+
+            
+
+
+
+  
             <div class="flex justify-between items-center">
+            
            
             <div class="hidden" id="modal-container">
+
                     
                 </div>
             </div>
@@ -189,6 +197,7 @@ function showWalletUI(tale_wallet_address) {
                 <button class="btn primary-btn" id="buy-btn">Buy</button>
                 <button class="btn  secondary-btn" id="sell-btn">Send</button>
             </div>
+            
             </div>
                 
         
@@ -204,7 +213,6 @@ function showWalletUI(tale_wallet_address) {
         </div>
 
         <div id="NFTs" class="tabcontent">
-          <h3>NFTs</h3>
           <div class="flex flex-wrap gap-20" id="wallet_asset_container"></div>
         </div>
 
@@ -224,6 +232,100 @@ function showWalletUI(tale_wallet_address) {
   fetchTokenBalance(tale_wallet_address);
   fetchList(tale_wallet_address);
   defaultOpen();
+}
+
+function loadmodal(tale_wallet_address) {
+  // Get modal element
+  var modal = document.getElementById("simpleModal");
+  // Get open modal button
+  var modalBtn = document.getElementById("modalBtn");
+
+  // Listen for open click
+  modalBtn.addEventListener("click", openModal);
+  // Listen for outside click
+  window.addEventListener("click", outsideClick);
+
+  // Open modal
+  function openModal() {
+    modal.style.display = "block";
+  }
+
+  // Close modal
+  function closeModal() {
+    modal.style.display = "none";
+  }
+
+  // Click outside and close
+  function outsideClick(e) {
+    if (e.target == modal) {
+      modal.style.display = "none";
+    }
+  }
+
+  //load content inside modal
+  const modalBody = document.querySelector(".modal-body");
+  modalBody.innerHTML = `
+            <div class="flex flex-col items-center gap-20" style="margin-top: 50px;">
+            <div class = "text-lg font-bold flex justify-around items-center shadow-xl wallet-address-container">
+                <div>
+                    <img src="./images/ellipse.svg" class="w-40 h-40 object-contain" />
+                </div>
+                <div style=" overflow: hidden; text-overflow: ellipsis;" class="w-100 font-bold" id="tale_wallet_address">  ${tale_wallet_address}</div>
+                <div  id="copy_to_clipboard"> <img src="./images/copy.png" alt="Copy Address" width="25"/> </div>
+            </div>
+                
+                <div class="flex flex-col items-center">
+                    <div class="relative z-10">
+                        <img src="./images/algorandhexagon.svg" class="w-50" />
+                    </div>
+                    <div  id="wallet_balance" class="text-2xl font-bold text-tale"> 
+                    <h1 id='balance'></h1></div>
+                </div>
+            <div class="flex gap-20 justify-center">
+                <button class="btn primary-btn" id="buy-btn">Buy</button>
+                <button class="btn  secondary-btn" id="sell-btn">Send</button>
+            </div>
+            
+            </div>
+                
+        
+        
+
+
+
+
+        <div class="tab" style="margin-top: 50px;">
+          <button class="tablinks font-bold" onclick="handleTablClick(event, 'NFTs')" id="defaultOpen">NFTs</button>
+          <button class="tablinks font-bold" onclick="handleTablClick(event, 'Tokens')">Tokens</button>
+          <button class="tablinks font-bold" onclick="handleTablClick(event, 'Activity')">Activity</button>
+        </div>
+
+        <div id="NFTs" class="tabcontent">
+          <div class="flex flex-wrap gap-20" id="wallet_asset_container"></div>
+        </div>
+
+        <div id="Tokens" class="tabcontent">
+          <h3>Tokens</h3>
+          <p>Tokens content will appear here.</p> 
+        </div>
+
+        <div id="Activity" class="tabcontent">
+          <h3>Activity</h3>
+          <p>Activity content will appear here.</p>
+        </div>
+
+
+        
+    </div>`;
+  fetchTokenBalance(tale_wallet_address);
+  fetchList(tale_wallet_address);
+  defaultOpen();
+}
+
+// get tale wallet address for modal call
+function getTaleWalletAddress() {
+  var walletAddress = localStorage.getItem("tale_wallet_address");
+  return walletAddress;
 }
 
 function fetchTokenBalance(tale_wallet_address) {
@@ -273,11 +375,13 @@ function fetchList(tale_wallet_address) {
           .then((response) => response.json())
           .then((data) => {
             newurl = data.image.replace("ipfs://", "");
+            const div = document.createElement("div");
+            div.classList.add("wallet-card");
             const img = document.createElement("img");
             img.src = `https://ipfs.io/ipfs/${newurl}`;
-            img.style.width = "400px";
-            img.style.height = "600px";
-            nftcontainer.appendChild(img);
+
+            div.appendChild(img);
+            nftcontainer.appendChild(div);
           });
       });
     })
@@ -307,7 +411,7 @@ function handleTablClick(evt, cityName) {
   for (i = 0; i < tablinks.length; i++) {
     tablinks[i].className = tablinks[i].className.replace(" active", "");
   }
-  document.getElementById(cityName).style.display = "block";
+  document.getElementById(cityName).style.display = "contents";
   evt.currentTarget.className += " active ";
 }
 
