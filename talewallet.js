@@ -163,11 +163,12 @@ function setUpTaleWallet(authToken) {
 // --------------------------------------------------------------
 
 function showWalletUI(tale_wallet_address) {
+  document.getElementById("wallet_div").style.backgroundColor = "cyan";
   document.getElementById("wallet_div").innerHTML = `   
           <div id="">
               <button
                 id="modalBtn"
-                class="button"
+                class="modalbutton"
               >
                 Open modal
               </button>
@@ -178,7 +179,7 @@ function showWalletUI(tale_wallet_address) {
               </div>
             </div>   
             
-            <div class="flex flex-col items-center gap-20" style="margin-top: 50px;">
+            <div class="flex flex-col items-center gap-20" style="padding-top: 30px;">
             <div class = "text-lg font-bold flex justify-around items-center shadow-xl wallet-address-container">
                 <div>
                     <img src="./images/ellipse.svg" class="w-40 h-40 object-contain" />
@@ -214,7 +215,7 @@ function showWalletUI(tale_wallet_address) {
         </div>
 
         <div id="NFTs" class="tabcontent">
-          <div class="flex flex-wrap gap-20" id="wallet_asset_container"></div>
+          <div class="flex flex-wrap gap-20 " id="wallet_asset_container"></div>
         </div>
 
         <div id="Tokens" class="tabcontent">
@@ -233,10 +234,10 @@ function showWalletUI(tale_wallet_address) {
   fetchTokenBalance(tale_wallet_address);
   fetchList(tale_wallet_address);
   defaultOpen();
-  loadmodal();
+  loadmodal("300px", "600px", "orange", "black");
 }
 
-function loadmodal() {
+function loadmodal(height, width, backgroundColor, color) {
   var tale_wallet_address = localStorage.getItem("tale_wallet_address");
   // Get modal element
   var modal = document.getElementById("simpleModal");
@@ -247,22 +248,30 @@ function loadmodal() {
   modalBtn.addEventListener("click", openModal);
   // Listen for outside click
   window.addEventListener("click", outsideClick);
+  const modalBody = document.querySelector(".modal-body");
+
+  // Set modal height, width, background color and text-color
+  modalBody.style.height = height;
+  modalBody.style.width = width;
+  // modalBody.style.backgroundColor = backgroundColor;
+  modalBody.style.color = color;
 
   // Open modal
   function openModal() {
     modal.style.display = "block";
+
     //load content inside modal
     const modalBody = document.querySelector(".modal-body");
     modalBody.innerHTML = `
-            <div class="flex flex-col items-center gap-20" style="margin-top: 50px;">
+            <div style="background-color:${backgroundColor}; width:100%;">
+              <div class="flex flex-col items-center gap-20" style="padding-top: 30px;">
             <div class = "text-lg font-bold flex justify-around items-center shadow-xl wallet-address-container">
                 <div>
                     <img src="./images/ellipse.svg" class="w-40 h-40 object-contain" />
                 </div>
                 <div style=" overflow: hidden; text-overflow: ellipsis;" class="w-100 font-bold" id="tale_wallet_address">  ${tale_wallet_address}</div>
                 <div  id="copy_to_clipboard"> <img src="./images/copy.png" alt="Copy Address" width="25"/> </div>
-            </div>
-                
+            </div>                
                 <div class="flex flex-col items-center">
                     <div class="relative">
                         <img src="./images/algorandhexagon.svg" class="w-50" />
@@ -271,8 +280,8 @@ function loadmodal() {
                     <h1 id='balance'></h1>
                     <p>Min Balance: 0.1 Algos </p> </div>
                 </div>
-            <div class="flex gap-20 justify-center">
-                <button class="btn primary-btn" id="buy-btn">Buy</button>
+            <div class="flex gap-20 justify-center" >
+                <button  class="btn primary-btn" id="buy-btn">Buy</button>
                 <button class="btn  secondary-btn" id="sell-btn">Send</button>
             </div>
             
@@ -284,14 +293,14 @@ function loadmodal() {
 
 
 
-        <div class="tab" style="margin-top: 50px;">
-          <button class="tablinks font-bold" onclick="handleTablClick(event, 'NFTs')" id="defaultOpen">NFTs</button>
-          <button class="tablinks font-bold" onclick="handleTablClick(event, 'Tokens')">Tokens</button>
-          <button class="tablinks font-bold" onclick="handleTablClick(event, 'Activity')">Activity</button>
+        <div  class="tab" style="margin-top: 50px;">
+          <button style="background-color:${backgroundColor}; width:100%;" class="tablinks font-bold" onclick="handleTablClick(event, 'NFTs')" id="defaultOpen">NFTs</button>
+          <button style="background-color:${backgroundColor}; width:100%;" class="tablinks font-bold" onclick="handleTablClick(event, 'Tokens')">Tokens</button>
+          <button style="background-color:${backgroundColor}; width:100%;" class="tablinks font-bold" onclick="handleTablClick(event, 'Activity')">Activity</button>
         </div>
 
         <div id="NFTs" class="tabcontent">
-          <div class="flex flex-wrap gap-20" id="wallet_asset_container"></div>
+          <div class="nftcontent" id="wallet_asset_container"></div>
         </div>
 
         <div id="Tokens" class="tabcontent">
@@ -306,7 +315,8 @@ function loadmodal() {
 
 
         
-    </div>`;
+    </div>
+            </div>`;
     fetchTokenBalance(tale_wallet_address);
     fetchList(tale_wallet_address);
     defaultOpen();
@@ -398,7 +408,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-function handleTablClick(evt, cityName) {
+function handleTablClick(evt, tabName) {
   var i, tabcontent, tablinks;
   tabcontent = document.getElementsByClassName("tabcontent");
   for (i = 0; i < tabcontent.length; i++) {
@@ -408,7 +418,7 @@ function handleTablClick(evt, cityName) {
   for (i = 0; i < tablinks.length; i++) {
     tablinks[i].className = tablinks[i].className.replace(" active", "");
   }
-  document.getElementById(cityName).style.display = "contents";
+  document.getElementById(tabName).style.display = "contents";
   evt.currentTarget.className += " active ";
 }
 

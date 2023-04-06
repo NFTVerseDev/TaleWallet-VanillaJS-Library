@@ -519,11 +519,11 @@ ol {
   text-align: left;
   margin-top: 40px;
 }
-#wallet_div {
+/* #wallet_div {
   padding: 10px 10px;
   width: 80%;
   margin: auto;
-}
+} */
 .img-icon {
   width: 15px;
   height: 15px;
@@ -641,6 +641,12 @@ ol {
   width: 80%;
   border-left: none;
 }
+.nftcontent {
+  width: 80%;
+  margin: auto;
+  display: flex;
+  justify-content: space-between;
+}
 
 .wallet-card {
   width: 23%;
@@ -653,14 +659,15 @@ ol {
 
 /* styles for modal starts here  */
 
-.button {
+.modalbutton {
   background: #1ce;
-  padding: 2em 2em;
+  padding: 1em 1em;
   color: #fff;
   border: 0;
+  float: right;
 }
 
-.button:hover {
+.modalbutton:hover {
   background: #e439ef;
   cursor: pointer;
 }
@@ -678,9 +685,10 @@ ol {
 }
 
 .modal-content {
-  background-color: #f4f4f4;
-  margin: 20% auto;
-  width: 70%;
+  position: absolute;
+  top: 10%;
+  right: 0;
+  overflow: auto;
   box-shadow: 0 5px 8px 0 rgba(0, 0, 0, 0.2), 0 7px 20px 0 rgba(0, 0, 0, 0.17);
 }
 
