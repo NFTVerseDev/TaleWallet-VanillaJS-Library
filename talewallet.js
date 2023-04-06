@@ -1,9 +1,10 @@
-WALLET_NAME = "ICC Wallet";
-NFTVERSE_DEV_API = "https://us-dev.api.onnftverse.com/v1";
-BLOCKCHAIN_SERVICE = "https://bs-dev.api.onnftverse.com/v1";
-app_token = 123;
+let WALLET_NAME = "ICC Wallet";
+let NFTVERSE_DEV_API = "https://us-dev.api.onnftverse.com/v1";
+let BLOCKCHAIN_SERVICE = "https://bs-dev.api.onnftverse.com/v1";
+let app_token = 123;
 
 function loginUI() {
+  let WALLET_NAME = "ICC Wallet";
   document.getElementById("wallet_div").innerHTML =
     `<div class="flex flex-col gap-10">
         <div class="imgcontainer">
@@ -162,21 +163,21 @@ function setUpTaleWallet(authToken) {
 // --------------------------------------------------------------
 
 function showWalletUI(tale_wallet_address) {
-  document.getElementById("wallet_div").innerHTML = `
-
-            
-
-
-
-  
-            <div class="flex justify-between items-center">
-            
-           
-            <div class="hidden" id="modal-container">
-
-                    
+  document.getElementById("wallet_div").innerHTML = `   
+          <div id="">
+              <button
+                id="modalBtn"
+                class="button"
+              >
+                Open modal
+              </button>
+              <div id="simpleModal" class="modal-overlay">
+                <div class="modal-content">
+                  <div class="modal-body"></div>
                 </div>
-            </div>
+              </div>
+            </div>   
+            
             <div class="flex flex-col items-center gap-20" style="margin-top: 50px;">
             <div class = "text-lg font-bold flex justify-around items-center shadow-xl wallet-address-container">
                 <div>
@@ -184,14 +185,14 @@ function showWalletUI(tale_wallet_address) {
                 </div>
                 <div style=" overflow: hidden; text-overflow: ellipsis;" class="w-100 font-bold" id="tale_wallet_address">  ${tale_wallet_address}</div>
                 <div  id="copy_to_clipboard"> <img src="./images/copy.png" alt="Copy Address" width="25"/> </div>
-            </div>
-                
+            </div>                
                 <div class="flex flex-col items-center">
                     <div class="relative">
                         <img src="./images/algorandhexagon.svg" class="w-50" />
                     </div>
-                    <div  id="wallet_balance" class="text-2xl font-bold text-tale"> 
-                    <h1 id='balance'></h1></div>
+                    <div  id="wallet_balance" class="font-bold text-tale"> 
+                    <h1 id='balance'></h1>
+                    <p>Min Balance: 0.1 Algos </p> </div>
                 </div>
             <div class="flex gap-20 justify-center">
                 <button class="btn primary-btn" id="buy-btn">Buy</button>
@@ -232,9 +233,11 @@ function showWalletUI(tale_wallet_address) {
   fetchTokenBalance(tale_wallet_address);
   fetchList(tale_wallet_address);
   defaultOpen();
+  loadmodal();
 }
 
-function loadmodal(tale_wallet_address) {
+function loadmodal() {
+  var tale_wallet_address = localStorage.getItem("tale_wallet_address");
   // Get modal element
   var modal = document.getElementById("simpleModal");
   // Get open modal button
@@ -248,23 +251,9 @@ function loadmodal(tale_wallet_address) {
   // Open modal
   function openModal() {
     modal.style.display = "block";
-  }
-
-  // Close modal
-  function closeModal() {
-    modal.style.display = "none";
-  }
-
-  // Click outside and close
-  function outsideClick(e) {
-    if (e.target == modal) {
-      modal.style.display = "none";
-    }
-  }
-
-  //load content inside modal
-  const modalBody = document.querySelector(".modal-body");
-  modalBody.innerHTML = `
+    //load content inside modal
+    const modalBody = document.querySelector(".modal-body");
+    modalBody.innerHTML = `
             <div class="flex flex-col items-center gap-20" style="margin-top: 50px;">
             <div class = "text-lg font-bold flex justify-around items-center shadow-xl wallet-address-container">
                 <div>
@@ -275,11 +264,12 @@ function loadmodal(tale_wallet_address) {
             </div>
                 
                 <div class="flex flex-col items-center">
-                    <div class="relative z-10">
+                    <div class="relative">
                         <img src="./images/algorandhexagon.svg" class="w-50" />
                     </div>
-                    <div  id="wallet_balance" class="text-2xl font-bold text-tale"> 
-                    <h1 id='balance'></h1></div>
+                    <div  id="wallet_balance" class="font-bold text-tale"> 
+                    <h1 id='balance'></h1>
+                    <p>Min Balance: 0.1 Algos </p> </div>
                 </div>
             <div class="flex gap-20 justify-center">
                 <button class="btn primary-btn" id="buy-btn">Buy</button>
@@ -317,15 +307,22 @@ function loadmodal(tale_wallet_address) {
 
         
     </div>`;
-  fetchTokenBalance(tale_wallet_address);
-  fetchList(tale_wallet_address);
-  defaultOpen();
-}
+    fetchTokenBalance(tale_wallet_address);
+    fetchList(tale_wallet_address);
+    defaultOpen();
+  }
 
-// get tale wallet address for modal call
-function getTaleWalletAddress() {
-  var walletAddress = localStorage.getItem("tale_wallet_address");
-  return walletAddress;
+  // Close modal
+  function closeModal() {
+    modal.style.display = "none";
+  }
+
+  // Click outside and close
+  function outsideClick(e) {
+    if (e.target == modal) {
+      modal.style.display = "none";
+    }
+  }
 }
 
 function fetchTokenBalance(tale_wallet_address) {
@@ -344,7 +341,7 @@ function fetchTokenBalance(tale_wallet_address) {
     .then((data) => {
       const balanceContainer = document.getElementById("wallet_balance");
       const balanceElement = document.getElementById("balance");
-      balanceElement.textContent = data.balance;
+      balanceElement.textContent = `${data.balance} Algos ⟳ `;
       balanceContainer.style.display = "block";
     })
     .catch((error) => {
