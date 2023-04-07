@@ -163,7 +163,6 @@ function setUpTaleWallet(authToken) {
 // --------------------------------------------------------------
 
 function showWalletUI(tale_wallet_address) {
-  document.getElementById("wallet_div").style.backgroundColor = "cyan";
   document.getElementById("wallet_div").innerHTML = `   
           <div id="">
               <button
