@@ -4,9 +4,8 @@ let BLOCKCHAIN_SERVICE = "https://bs-dev.api.onnftverse.com/v1";
 let app_token = 123;
 
 function loginUI() {
-  let WALLET_NAME = "ICC Wallet";
   document.getElementById("wallet_div").innerHTML =
-    `<div class="flex flex-col gap-10">
+    `<div class="flex flex-col gap-10"  style="width:50%; margin: 0 auto">
         <div class="imgcontainer">
         <img src="./images/talewallet.png" alt="Avatar" class="avatar">
         </div>
@@ -127,7 +126,7 @@ function getOrSetupWallet(userId, authToken) {
         setUpTaleWallet(authToken);
       } else {
         localStorage.setItem("tale_wallet_address", talewallet[0].address);
-        showWalletUI(talewallet[0].address);
+        showWalletUI(talewallet[0].address, "cyan", "black");
       }
     })
     .catch(
@@ -155,16 +154,16 @@ function setUpTaleWallet(authToken) {
     .then((res) => {
       localStorage.setItem("tale_wallet_address", res.address);
       document.getElementById("wallet_div").innerHTML = "";
-      showWalletUI(res.address);
+      showWalletUI(res.address, "cyan", "black");
     })
     .catch((rej) => console.log(rej));
 }
 
 // --------------------------------------------------------------
 
-function showWalletUI(tale_wallet_address) {
+function showWalletUI(tale_wallet_address, backgroundColor, color) {
   document.getElementById("wallet_div").innerHTML = `   
-          <div id="">
+          <div style="background-color:${backgroundColor}; width:100%;">
               <button
                 id="modalBtn"
                 class="modalbutton"
@@ -178,7 +177,7 @@ function showWalletUI(tale_wallet_address) {
               </div>
             </div>   
             
-            <div class="flex flex-col items-center gap-20" style="padding-top: 30px;">
+            <div style="background-color:${backgroundColor}; width:100%;" class="flex flex-col items-center gap-20" style="padding-top: 30px;">
             <div class = "text-lg font-bold flex justify-around items-center shadow-xl wallet-address-container">
                 <div>
                     <img src="./images/ellipse.svg" class="w-40 h-40 object-contain" />
@@ -207,25 +206,31 @@ function showWalletUI(tale_wallet_address) {
 
 
 
-        <div class="tab" style="margin-top: 50px;">
-          <button class="tablinks font-bold" onclick="handleTablClick(event, 'NFTs')" id="defaultOpen">NFTs</button>
-          <button class="tablinks font-bold" onclick="handleTablClick(event, 'Tokens')">Tokens</button>
-          <button class="tablinks font-bold" onclick="handleTablClick(event, 'Activity')">Activity</button>
+        <div class="tab" style="padding-top: 50px; background-color:${backgroundColor}; width:100%;">
+          <button style="background-color:${backgroundColor}; width:100%;" class="tablinks font-bold" onclick="handleTablClick(event, 'NFTs')" id="defaultOpen">NFTs</button>
+          <button style="background-color:${backgroundColor}; width:100%;" class="tablinks font-bold" onclick="handleTablClick(event, 'Tokens')">Tokens</button>
+          <button style="background-color:${backgroundColor}; width:100%;" class="tablinks font-bold" onclick="handleTablClick(event, 'Activity')">Activity</button>
         </div>
 
-        <div id="NFTs" class="tabcontent">
-          <div class="flex flex-wrap gap-20 " id="wallet_asset_container"></div>
+        <div id="NFTs" class="tabcontent" style="background-color:${backgroundColor}; width:100%;">
+          <div class="flex flex-wrap gap-20 " id="wallet_asset_container" style="background-color:${backgroundColor}; width:100%;"></div>
         </div>
 
-        <div id="Tokens" class="tabcontent">
-          <h3>Tokens</h3>
-          <p>Tokens content will appear here.</p> 
+
+        <div id="Tokens" class="tabcontent" style="background-color:${backgroundColor}; width:100%;">
+          <div class="flex flex-wrap gap-20 " id="" style="background-color:${backgroundColor}; width:100%;">
+          <h1>this is Token tab</h1>
+          </div>
         </div>
 
-        <div id="Activity" class="tabcontent">
-          <h3>Activity</h3>
-          <p>Activity content will appear here.</p>
+        <div id="Activity" class="tabcontent" style="background-color:${backgroundColor}; width:100%;">
+          <div class="flex flex-wrap gap-20 " id="" style="background-color:${backgroundColor}; width:100%;">
+          <h1>this is activity tab</h1>
+          </div>
         </div>
+
+       
+
 
 
         
@@ -401,7 +406,7 @@ document.addEventListener("DOMContentLoaded", () => {
   var authToken = localStorage.getItem("authToken");
   var tale_wallet_address = localStorage.getItem("tale_wallet_address");
   if (tale_wallet_address) {
-    showWalletUI(tale_wallet_address);
+    showWalletUI(tale_wallet_address, "cyan", "black");
   } else {
     loginUI();
   }
