@@ -1,10 +1,6 @@
-let WALLET_NAME = "ICC Wallet";
-let NFTVERSE_DEV_API = "https://us-dev.api.onnftverse.com/v1";
-let BLOCKCHAIN_SERVICE = "https://bs-dev.api.onnftverse.com/v1";
-let app_token = 123;
-
+//method to show login UI
 function loginUI() {
-  document.getElementById("wallet_div").innerHTML =
+  document.getElementById("tw_div").innerHTML =
     `<div class="flex flex-col gap-10"  style="width:50%; margin: 0 auto">
         <div class="imgcontainer">
         <img src="./images/talewallet.png" alt="Avatar" class="avatar">
@@ -36,12 +32,14 @@ function loginUI() {
   }
 }
 
+//method to validate email address
 function validateEmail(email) {
   const re =
     /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   return re.test(String(email).toLowerCase());
 }
 
+//method to send OTP
 function sendOTP(email) {
   if (!validateEmail(email)) {
     document.getElementById("sb_rb_error").innerHTML =
@@ -58,7 +56,7 @@ function sendOTP(email) {
       }),
     };
 
-    fetch(`${NFTVERSE_DEV_API}/otp/send?type=login`, config).then((res) => {
+    fetch(`${NFTVERSE_API_ENDPOINT}/otp/send?type=login`, config).then((res) => {
       document.getElementById(
         "email_address_input"
       ).innerHTML = `<div class="flex shadow-1 w-full  email-input-container" id="otp-container">
@@ -76,6 +74,7 @@ function sendOTP(email) {
   }
 }
 
+//method to verify otp
 function verifyOtp(email, otp) {
   console.log(otp);
   if (!otp) {
@@ -93,9 +92,10 @@ function verifyOtp(email, otp) {
         otp: otp,
       }),
     };
-    fetch(`${NFTVERSE_DEV_API}/otp/verify?type=login`, config)
+    fetch(`${NFTVERSE_API_ENDPOINT}/otp/verify?type=login`, config)
       .then((res) => res.json())
       .then((res) => {
+        console.log(res)
         getOrSetupWallet(res.userId, res.authToken);
       })
       .catch(
@@ -105,27 +105,30 @@ function verifyOtp(email, otp) {
       );
   }
 }
-function getOrSetupWallet(userId, authToken) {
-  localStorage.setItem("wallet_authToken", authToken);
-  localStorage.setItem("userId", userId);
+
+//method to get wallet address, if address not found, it will create a new address by calling setUpTaleWallet function
+function getOrSetupWallet(tw_userId, tw_authToken) {
+  localStorage.setItem("tw_authToken", authToken);
+  localStorage.setItem("tw_userId", tw_userId);
+  console.log("get or setup wallet")
   let config = {
     method: "get",
     headers: {
-      "X-Auth-Token": authToken,
+      "X-Auth-Token": tw_authToken,
       "Content-Type": "application/json",
     },
   };
 
-  fetch(`${BLOCKCHAIN_SERVICE}/user/blockchain/account`, config)
+  fetch(`${WALLET_API_ENDPOINT}/user/blockchain/account`, config)
     .then((res) => res.json())
     .then((res) => {
       const talewallet = res?.filter(
         (wallet) => wallet.wallet === "TALEWALLET"
       );
       if (talewallet?.length === 0) {
-        setUpTaleWallet(authToken);
+        setUpTaleWallet(tw_authToken);
       } else {
-        localStorage.setItem("tale_wallet_address", talewallet[0].address);
+        localStorage.setItem("tw_address", talewallet[0].address);
         showWalletUI(talewallet[0].address, "cyan", "black");
       }
     })
@@ -136,11 +139,12 @@ function getOrSetupWallet(userId, authToken) {
     );
 }
 
-function setUpTaleWallet(authToken) {
+//method to setup a new wallet for the user
+function setUpTaleWallet(tw_authToken) {
   let config = {
     method: "post",
     headers: {
-      "X-Auth-Token": authToken,
+      "X-Auth-Token": tw_authToken,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
@@ -149,20 +153,20 @@ function setUpTaleWallet(authToken) {
       marketplaceAddress: 0,
     }),
   };
-  fetch(`${BLOCKCHAIN_SERVICE}/user/blockchain/wallet/setup`, config)
+  fetch(`${WALLET_API_ENDPOINT}/user/blockchain/wallet/setup`, config)
     .then((res) => res.json())
     .then((res) => {
-      localStorage.setItem("tale_wallet_address", res.address);
-      document.getElementById("wallet_div").innerHTML = "";
+      localStorage.setItem("tw_address", res.address);
+      document.getElementById("tw_div").innerHTML = "";
       showWalletUI(res.address, "cyan", "black");
     })
     .catch((rej) => console.log(rej));
 }
 
-// --------------------------------------------------------------
 
-function showWalletUI(tale_wallet_address, backgroundColor, color) {
-  document.getElementById("wallet_div").innerHTML = `   
+//method to show wallet UI
+function showWalletUI(tw_address, backgroundColor, color) {
+  document.getElementById("tw_div").innerHTML = `   
           <div style="background-color:${backgroundColor}; width:100%;">
               <button
                 id="modalBtn"
@@ -182,7 +186,7 @@ function showWalletUI(tale_wallet_address, backgroundColor, color) {
                 <div>
                     <img src="./images/ellipse.svg" class="w-40 h-40 object-contain" />
                 </div>
-                <div style=" overflow: hidden; text-overflow: ellipsis;" class="w-100 font-bold" id="tale_wallet_address">  ${tale_wallet_address}</div>
+                <div style=" overflow: hidden; text-overflow: ellipsis;" class="w-100 font-bold" id="tale_wallet_address">  ${tw_address}</div>
                 <div  id="copy_to_clipboard"> <img src="./images/copy.png" alt="Copy Address" width="25"/> </div>
             </div>                
                 <div class="flex flex-col items-center">
@@ -199,12 +203,6 @@ function showWalletUI(tale_wallet_address, backgroundColor, color) {
             </div>
             
             </div>
-                
-        
-        
-
-
-
 
         <div class="tab" style="padding-top: 50px; background-color:${backgroundColor}; width:100%;">
           <button style="background-color:${backgroundColor}; width:100%;" class="tablinks font-bold" onclick="handleTablClick(event, 'NFTs')" id="defaultOpen">NFTs</button>
@@ -229,14 +227,9 @@ function showWalletUI(tale_wallet_address, backgroundColor, color) {
           </div>
         </div>
 
-       
-
-
-
-        
     </div>`;
-  fetchTokenBalance(tale_wallet_address);
-  fetchList(tale_wallet_address);
+  fetchTokenBalance(tw_address);
+  fetchList(tw_address);
   defaultOpen();
   loadmodal("300px", "600px", "orange", "black");
 }
@@ -401,17 +394,6 @@ function fetchList(tale_wallet_address) {
     });
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  console.log("Hello World!");
-  var authToken = localStorage.getItem("authToken");
-  var tale_wallet_address = localStorage.getItem("tale_wallet_address");
-  if (tale_wallet_address) {
-    showWalletUI(tale_wallet_address, "cyan", "black");
-  } else {
-    loginUI();
-  }
-});
-
 function handleTablClick(evt, tabName) {
   var i, tabcontent, tablinks;
   tabcontent = document.getElementsByClassName("tabcontent");
@@ -430,3 +412,14 @@ function defaultOpen() {
   // Get the element with id="defaultOpen" and click on it
   document.getElementById("defaultOpen").click();
 }
+
+//once page loads, this method is called to show the wallet or login UI
+document.addEventListener("DOMContentLoaded", () => {
+  var authToken = localStorage.getItem("tw_authToken");
+  var tw_address = localStorage.getItem("tw_address");
+  if (tw_address) {
+    showWalletUI(tw_address, "cyan", "black");
+  } else {
+    loginUI();
+  }
+});
