@@ -1,8 +1,4 @@
-let WALLET_NAME = "ICC Wallet";
-let NFTVERSE_DEV_API = "https://us-dev.api.onnftverse.com/v1";
-let BLOCKCHAIN_SERVICE = "https://bs-dev.api.onnftverse.com/v1";
-let app_token = 123;
-
+var tale_wallet_address = localStorage.getItem("tale_wallet_address");
 function loginUI() {
   document.getElementById("wallet_div").innerHTML =
     `<div class="flex flex-col gap-10"  style="width:50%; margin: 0 auto">
@@ -126,7 +122,7 @@ function getOrSetupWallet(userId, authToken) {
         setUpTaleWallet(authToken);
       } else {
         localStorage.setItem("tale_wallet_address", talewallet[0].address);
-        showWalletUI(talewallet[0].address, "cyan", "black");
+        showWalletUI(talewallet[0].address, backgroundColor, color);
       }
     })
     .catch(
@@ -154,16 +150,14 @@ function setUpTaleWallet(authToken) {
     .then((res) => {
       localStorage.setItem("tale_wallet_address", res.address);
       document.getElementById("wallet_div").innerHTML = "";
-      showWalletUI(res.address, "cyan", "black");
+      showWalletUI(res.address, backgroundColor, color);
     })
     .catch((rej) => console.log(rej));
 }
 
-// --------------------------------------------------------------
-
 function showWalletUI(tale_wallet_address, backgroundColor, color) {
   document.getElementById("wallet_div").innerHTML = `   
-          <div style="background-color:${backgroundColor}; width:100%;">
+          <div style="background-color:${backgroundColor}; color:${color}; width:100%;">
               <button
                 id="modalBtn"
                 class="modalbutton"
@@ -177,7 +171,7 @@ function showWalletUI(tale_wallet_address, backgroundColor, color) {
               </div>
             </div>   
             
-            <div style="background-color:${backgroundColor}; width:100%;" class="flex flex-col items-center gap-20" style="padding-top: 30px;">
+            <div style="background-color:${backgroundColor}; color:${color}; width:100%;" class="flex flex-col items-center gap-20" style="padding-top: 30px;">
             <div class = "text-lg font-bold flex justify-around items-center shadow-xl wallet-address-container">
                 <div>
                     <img src="./images/ellipse.svg" class="w-40 h-40 object-contain" />
@@ -191,7 +185,10 @@ function showWalletUI(tale_wallet_address, backgroundColor, color) {
                     </div>
                     <div  id="wallet_balance" class="font-bold text-tale"> 
                     <h1 id='balance'></h1>
-                    <p>Min Balance: 0.1 Algos </p> </div>
+                    <p id='minbal'></p>
+                   </div>
+                    
+                   
                 </div>
             <div class="flex gap-20 justify-center">
                 <button class="btn primary-btn" id="buy-btn">Buy</button>
@@ -213,7 +210,7 @@ function showWalletUI(tale_wallet_address, backgroundColor, color) {
         </div>
 
         <div id="NFTs" class="tabcontent" style="background-color:${backgroundColor}; width:100%;">
-          <div class="flex flex-wrap gap-20 " id="wallet_asset_container" style="background-color:${backgroundColor}; width:100%;"></div>
+          <div class="flex justify-start flex-wrap gap-20 " id="wallet_asset_container" style="background-color:${backgroundColor}; color:${color}; width:100%; padding: 0 5%;"></div>
         </div>
 
 
@@ -236,6 +233,7 @@ function showWalletUI(tale_wallet_address, backgroundColor, color) {
         
     </div>`;
   fetchTokenBalance(tale_wallet_address);
+  fetchMinBalance(tale_wallet_address);
   fetchList(tale_wallet_address);
   defaultOpen();
   loadmodal("300px", "600px", "orange", "black");
@@ -303,9 +301,11 @@ function loadmodal(height, width, backgroundColor, color) {
           <button style="background-color:${backgroundColor}; width:100%;" class="tablinks font-bold" onclick="handleTablClick(event, 'Activity')">Activity</button>
         </div>
 
-        <div id="NFTs" class="tabcontent">
-          <div class="nftcontent" id="wallet_asset_container"></div>
+        
+         <div id="NFTs" class="tabcontent" style="background-color:${backgroundColor}; width:90%;">
+          <div class="flex justify-start flex-wrap gap-20" id="wallet_asset_container" style="background-color:${backgroundColor}; color:${color}; width:100%; padding:5%; "></div>
         </div>
+
 
         <div id="Tokens" class="tabcontent">
           <h3>Tokens</h3>
@@ -356,6 +356,30 @@ function fetchTokenBalance(tale_wallet_address) {
       const balanceContainer = document.getElementById("wallet_balance");
       const balanceElement = document.getElementById("balance");
       balanceElement.textContent = `${data.balance} Algos ⟳ `;
+      balanceElement.style.color = color;
+      balanceContainer.style.display = "block";
+    })
+    .catch((error) => {
+      console.error("Error fetching balance:", error);
+    });
+}
+function fetchMinBalance(tale_wallet_address) {
+  const authtoken = localStorage.getItem("wallet_authToken");
+  fetch(
+    `https://bs-dev.api.onnftverse.com/v1/user/wallet/balance?blockchain=ALGORAND&address=${tale_wallet_address}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "x-auth-token": authtoken,
+      },
+    }
+  )
+    .then((response) => response.json())
+    .then((data) => {
+      const balanceElement = document.getElementById("minbal");
+      balanceElement.textContent = `Min Balance: 0.1 Algossss`;
+      balanceElement.style.color = color;
       balanceContainer.style.display = "block";
     })
     .catch((error) => {
@@ -385,13 +409,27 @@ function fetchList(tale_wallet_address) {
         return fetch(`https://ipfs.io/ipfs/${reducedhash}`)
           .then((response) => response.json())
           .then((data) => {
-            newurl = data.image.replace("ipfs://", "");
+            let newurl = data.image.replace("ipfs://", "");
+
             const div = document.createElement("div");
             div.classList.add("wallet-card");
             const img = document.createElement("img");
             img.src = `https://ipfs.io/ipfs/${newurl}`;
-
             div.appendChild(img);
+
+            const textdiv = document.createElement("div");
+            div.classList.add("text-div");
+
+            const pTag = document.createElement("p");
+            pTag.textContent = item.params.name;
+            textdiv.appendChild(pTag);
+
+            div.appendChild(textdiv);
+            // Add a click event listener to the div element
+            div.addEventListener("click", () => {
+              nftDetail(item, newurl);
+            });
+
             nftcontainer.appendChild(div);
           });
       });
@@ -401,12 +439,153 @@ function fetchList(tale_wallet_address) {
     });
 }
 
+function fetchdetails(url) {
+  console.log(url);
+  return fetch(`https://nftverse-dev.mypinata.cloud/ipfs/${url}`, {
+    method: "GET",
+  }).then((response) => response.json());
+}
+
+async function nftDetail(item, newurl) {
+  const url = item.params.url.replace("ipfs://", "");
+  const data = await fetchdetails(url);
+  console.log("hello", data);
+
+  const walletDiv = document.getElementById("wallet_div");
+  walletDiv.innerHTML = `
+  <button id="back-button"> Go Back</button>
+      <div class="nft-details-container">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-content: center;
+          "
+        >
+          <div style="width: 40%">
+            <img src="https://ipfs.io/ipfs/${newurl}" />
+          </div>
+          <div style="width: 40%">
+            <h3>${item.params.name}</h3>
+            <div
+              style="
+                display: flex;
+                align-content: center;
+                justify-content: start;
+                gap: 20px;
+              "
+            >
+              <div
+                style="
+                  width: 10%;
+                  display: flex;
+                  align-content: center;
+                "
+              >
+                <img src="./images/Algorand.png" alt="algorand" style="width: 100%" />
+              </div>
+              <h3>Algorand</h3>
+            </div>
+
+            <div class="youOwn">
+              <h3>You own this NFT</h3>
+            </div>
+          </div>    
+        </div>
+
+
+        <div class="accordion-main-container">
+          <div class="accordionWrapper">
+            <div class="accordionItem open">
+              <h2 class="accordionItemHeading">Description</h2>
+              <div class="accordionItemContent">
+                <p>${data.description}</p>
+              </div>
+            </div>
+
+            <div class="accordionItem close">
+              <h2 class="accordionItemHeading">Properties</h2>
+              <div class="accordionItemContent">
+                <div class="properties-container" style="display: flex; flex-direction: row; flex-wrap: wrap;">
+                  ${Object.keys(data.properties)
+                    .map(
+                      (key) => `
+                        <div class="properties-card">
+                          <h2>${key}:</h2>
+                          <span><p>${data.properties[key]}</p></span>
+                        </div>
+                      `
+                    )
+                    .join("")}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="accordionWrapper">
+            <div class="accordionItem open">
+              <h2 class="accordionItemHeading">Owners</h2>
+              <div class="accordionItemContent">
+                <p>Creator Address: ${item.params.creator}</p>
+              </div>
+            </div>
+
+            <div class="accordionItem close">
+              <h2 class="accordionItemHeading">Details</h2>
+              <div class="accordionItemContent">
+                <p>NFT Standard ${data.standard}</p>
+                  <p>Mint Address: ${item.params.creator}
+              </div>
+            </div>
+          </div>                   
+        </div>
+
+
+
+
+
+        <div class="accordion-bottom-container">
+          <div class="accordionWrapper">
+            <div class="accordionItem open">
+              <h2 class="accordionItemHeading">Activity</h2>
+              <div class="accordionItemContent">
+                <p>No Activities to Display</p>
+              </div>
+            </div>                          
+          </div>                   
+        </div>
+        `;
+
+  const backButton = document.getElementById("back-button");
+  backButton.addEventListener("click", function () {
+    showWalletUI(tale_wallet_address, backgroundColor, color);
+  });
+
+  var accItem = document.getElementsByClassName("accordionItem");
+  var accHD = document.getElementsByClassName("accordionItemHeading");
+  for (i = 0; i < accHD.length; i++) {
+    accHD[i].addEventListener("click", toggleItem, false);
+  }
+  function toggleItem() {
+    var itemClass = this.parentNode.className;
+    for (i = 0; i < accItem.length; i++) {
+      accItem[i].className = "accordionItem close";
+    }
+    if (itemClass == "accordionItem close") {
+      this.parentNode.className = "accordionItem open";
+    }
+  }
+}
+
+function handleBackClick() {
+  showWalletUI(tale_wallet_address, backgroundColor, color);
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   console.log("Hello World!");
   var authToken = localStorage.getItem("authToken");
   var tale_wallet_address = localStorage.getItem("tale_wallet_address");
   if (tale_wallet_address) {
-    showWalletUI(tale_wallet_address, "cyan", "black");
+    showWalletUI(tale_wallet_address, backgroundColor, color);
   } else {
     loginUI();
   }

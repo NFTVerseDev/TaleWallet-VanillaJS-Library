@@ -649,12 +649,16 @@ ol {
 }
 
 .wallet-card {
-  width: 23%;
-  margin: 5% 0%;
+  width: 20%;
+  margin-top: 2%;
+  border-radius: 20px;
+  overflow: hidden;
 }
 .wallet-card img {
   width: 100%;
-  height: 60%;
+}
+.logoimg {
+  width: 80px;
 }
 
 /* styles for modal starts here  */
@@ -724,3 +728,125 @@ ol {
 }
 
 /* styles for modal ends  here  */
+
+/* styles for loading start here  */
+.loader {
+  border: 10px solid #f3f3f3;
+  border-top: 10px solid #3498db;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* styles for nft details container  */
+.nft-details-container {
+  width: 85%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+}
+.youOwn {
+  width: 60%;
+  margin-top: 2%;
+  text-align: center;
+  border: 1px solid rgb(231, 225, 225);
+  border-radius: 10px;
+}
+
+/* styles for accordion starts here  */
+.accordion-main-container {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  width: 100%;
+}
+
+.accordionWrapper {
+  width: 50%;
+}
+
+.accordionItem {
+  float: left;
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 2% 0;
+}
+.accordionItemHeading {
+  cursor: pointer;
+  margin: 0px 0px 10px 0px;
+  padding: 10px;
+  background: #7c808342;
+  width: 100%;
+  border-radius: 3px;
+  box-sizing: border-box;
+}
+.close .accordionItemContent {
+  height: 0px;
+  transition: height 1s ease-out;
+  -webkit-transform: scaleY(0);
+  -o-transform: scaleY(0);
+  -ms-transform: scaleY(0);
+  transform: scaleY(0);
+  float: left;
+  display: block;
+}
+
+.properties-card {
+  width: 30%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: rgb(141, 153, 155);
+  border-radius: 10px;
+  padding: 2%;
+  margin: 2%;
+}
+.open .accordionItemContent {
+  padding: 20px;
+  border: 1px solid #ddd;
+  width: 100%;
+  margin: 0px 0px 10px 0px;
+  display: block;
+  -webkit-transform: scaleY(1);
+  -o-transform: scaleY(1);
+  -ms-transform: scaleY(1);
+  transform: scaleY(1);
+  -webkit-transform-origin: top;
+  -o-transform-origin: top;
+  -ms-transform-origin: top;
+  transform-origin: top;
+
+  -webkit-transition: -webkit-transform 0.4s ease-out;
+  -o-transition: -o-transform 0.4s ease;
+  -ms-transition: -ms-transform 0.4s ease;
+  transition: transform 0.4s ease;
+  box-sizing: border-box;
+}
+
+.open .accordionItemHeading {
+  margin: 0px;
+  -webkit-border-top-left-radius: 3px;
+  -webkit-border-top-right-radius: 3px;
+  -moz-border-radius-topleft: 3px;
+  -moz-border-radius-topright: 3px;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  -webkit-border-bottom-right-radius: 0px;
+  -webkit-border-bottom-left-radius: 0px;
+  -moz-border-radius-bottomright: 0px;
+  -moz-border-radius-bottomleft: 0px;
+  border-bottom-right-radius: 0px;
+  border-bottom-left-radius: 0px;
+}
