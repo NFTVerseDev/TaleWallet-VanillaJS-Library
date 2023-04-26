@@ -653,12 +653,17 @@ ol {
   margin-top: 2%;
   border-radius: 20px;
   overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.89);
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
 .wallet-card img {
   width: 100%;
 }
+.text-div {
+  /* display: flex; */
+}
 .logoimg {
-  width: 80px;
+  width: 80px !important;
 }
 
 /* styles for modal starts here  */
